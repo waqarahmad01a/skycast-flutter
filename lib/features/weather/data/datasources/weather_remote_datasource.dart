@@ -42,7 +42,7 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
         queryParameters: {
           'latitude': lat,
           'longitude': lon,
-          'current': 'temperature_2m,wind_speed_10m,weather_code',
+          'current': 'temperature_2m,wind_speed_10m,weather_code,is_day',
         },
       );
 

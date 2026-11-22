@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/weather_cubit.dart';
 import '../cubit/weather_state.dart';
+import '../widgets/weather_code_helper.dart';
 
 class WeatherHomeScreen extends StatefulWidget {
   const WeatherHomeScreen({super.key});
@@ -30,6 +31,7 @@ class _WeatherHomeScreenState extends State<WeatherHomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
@@ -65,14 +67,25 @@ class _WeatherHomeScreenState extends State<WeatherHomeScreen> {
                   }
                   if (state is WeatherError) {
                     return Center(
-                      child: Text(
-                        state.message,
-                        style: const TextStyle(color: Colors.red),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            state.message,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(height: 12),
+                          OutlinedButton(
+                            onPressed: _search,
+                            child: const Text('Retry'),
+                          ),
+                        ],
                       ),
                     );
                   }
                   if (state is WeatherLoaded) {
                     final w = state.weather;
+                    final info = mapWeatherCode(w.weatherCode, isDay: w.isDay);
                     return Card(
                       child: Padding(
                         padding: const EdgeInsets.all(20),
@@ -83,14 +96,22 @@ class _WeatherHomeScreenState extends State<WeatherHomeScreen> {
                               w.cityName,
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
+                            const SizedBox(height: 12),
+                            Icon(info.icon, size: 48),
+                            const SizedBox(height: 8),
+                            Text(
+                              info.label,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               '${w.temperatureC.toStringAsFixed(1)} °C',
                               style: Theme.of(context).textTheme.displaySmall,
                             ),
                             const SizedBox(height: 8),
-                            Text('Wind: ${w.windSpeedKmh.toStringAsFixed(1)} km/h'),
-                            Text('Weather Code: ${w.weatherCode}'),
+                            Text(
+                              'Wind: ${w.windSpeedKmh.toStringAsFixed(1)} km/h',
+                            ),
                           ],
                         ),
                       ),
